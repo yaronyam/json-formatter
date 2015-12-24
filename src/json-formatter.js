@@ -8,6 +8,7 @@ angular.module('jsonFormatter', ['RecursionHelper'])
   var hoverPreviewEnabled = false;
   var hoverPreviewArrayCount = 100;
   var hoverPreviewFieldCount = 5;
+  var openUrlsInNewWindow = false;
 
   return {
     get hoverPreviewEnabled() {
@@ -30,12 +31,18 @@ angular.module('jsonFormatter', ['RecursionHelper'])
     set hoverPreviewFieldCount(value) {
       hoverPreviewFieldCount = parseInt(value, 10);
     },
-
+    get openUrlsInNewWindow() {
+      return openUrlsInNewWindow;
+    },
+    set openUrlsInNewWindow(value) {
+      openUrlsInNewWindow = !!value;
+    },
     $get: function () {
       return {
         hoverPreviewEnabled: hoverPreviewEnabled,
         hoverPreviewArrayCount: hoverPreviewArrayCount,
-        hoverPreviewFieldCount: hoverPreviewFieldCount
+        hoverPreviewFieldCount: hoverPreviewFieldCount,
+        openUrlsInNewWindow: openUrlsInNewWindow
       };
     }
   };
@@ -158,7 +165,14 @@ angular.module('jsonFormatter', ['RecursionHelper'])
 
     scope.openLink = function (isUrl) {
       if(isUrl) {
-        window.location.href = scope.json;
+        if(!!JSONFormatterConfig.openUrlsInNewWindow){
+          var win = window.open(scope.json, '_blank');
+          if(win){ //Browser allowed link to be opened
+            win.focus();
+          }
+        }else{
+          window.location.href = scope.json;
+        }
       }
     };
 
